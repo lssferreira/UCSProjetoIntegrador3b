@@ -1,5 +1,6 @@
 package DAO;
 
+import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -24,6 +25,17 @@ public class Conexao {
             }
         }
         return conexao;
+    }
+
+    public static ResultSet executarQuery(String query){
+        try {
+            Statement statement = null;
+            statement = conexao.createStatement();
+            statement.execute(query);
+            return statement.getResultSet();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void fecharConexao() {
