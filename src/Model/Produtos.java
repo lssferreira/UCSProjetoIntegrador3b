@@ -9,4 +9,21 @@ public class Produtos {
         Nome = nome;
         Descricao = descricao;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Código: %d\nNome: %s", getCodigo(),getNome());
+    }
+
+    public int getCodigo() {
+        return Codigo;
+    }
+
+    public String getNome() {
+        return Nome;
+    }
+
+    public String getDescricao() {
+        return Descricao;
+    }
 }
