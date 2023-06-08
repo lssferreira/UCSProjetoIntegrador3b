@@ -12,33 +12,29 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class CadastraProduto extends JFrame implements ActionListener {
 
     //region Componentes
-    private JPanel fundo;
-    private JPanel campos;
-    private JPanel botoes;
+    private final JPanel fundo;
+    private final JPanel campos;
+    private final JPanel botoes;
 
-    private JButton bBusca;
-    private JButton bLimpa;
-    private JButton bInsere;
-    private JButton bAltera;
-    private JButton bRemove;
+    private final JButton bBusca;
+    private final JButton bLimpa;
+    private final JButton bInsere;
+    private final JButton bAltera;
+    private final JButton bRemove;
 
-    private JLabel lCodigo;
-    private JLabel lNome;
-    private JLabel lDescricao;
+    private final JLabel lCodigo;
+    private final JLabel lNome;
+    private final JLabel lDescricao;
 
-    private JTextField tCodigo;
-    private JTextField tNome;
-    private JTextField tDescricao;
+    private final JTextField tCodigo;
+    private final JTextField tNome;
+    private final JTextField tDescricao;
     //endregion
 
     private Connection conn;
@@ -134,18 +130,29 @@ public class CadastraProduto extends JFrame implements ActionListener {
     }
 
     private void acaoBuscar(Produtos produto) {
-       controllerProdutos.BuscarProduto(produto);
+        var produtoRetornado = controllerProdutos.BuscarProduto(produto);
+        if (produtoRetornado != null)
+            AtualizaTextBox(produtoRetornado);
+        else
+            JOptionPane.showMessageDialog(this, "Nenhum produto localizado com esse código.");
+    }
+
+    private void AtualizaTextBox(Produtos produtoRetornado) {
+        this.tCodigo.setText(String.valueOf(produtoRetornado.getCodigo()));
+        this.tNome.setText(produtoRetornado.getNome());
+        this.tDescricao.setText(produtoRetornado.getDescricao());
     }
 
     private void acaoInserir(Produtos produto) {
-        controllerProdutos.InserirProduto(produto);
+        JOptionPane.showMessageDialog(this, controllerProdutos.InserirProduto(produto));
     }
 
     private void acaoAlterar(Produtos produto) {
-        controllerProdutos.AlterarProduto(produto);
+        JOptionPane.showMessageDialog(this, controllerProdutos.AlterarProduto(produto));
     }
 
     private void acaoRemover(Produtos produto) {
-       controllerProdutos.RemoverProduto(produto);
+        JOptionPane.showMessageDialog(this, controllerProdutos.RemoverProduto(produto));
+        acaoLimpar();
     }
 }
