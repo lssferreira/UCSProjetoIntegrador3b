@@ -1,35 +1,33 @@
 package DAO;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-public class Conexao {
-    private static final String DRIVER = "org.postgresql.Driver";
-    private static final String SERVER = "localhost";
-    private static final String PORT = "5432";
-    private static final String NOMEBANCO = "ProjetoIntegrador3B";
-    private static final String HOST = "jdbc:postgresql://" + SERVER + ":" + PORT + "/" + NOMEBANCO;
-    private static final String USUARIO = "postgres";
-    private static final String SENHA = "1";
+public abstract class Conexao {
     private static Connection conexao;
 
-    private Conexao() {
+    protected abstract String getDriver();
+    protected abstract String getHost();
+    protected abstract String getUsuario();
+    protected abstract String getSenha();
+
+    protected Conexao() {
         // Construtor privado para evitar instanciação direta da classe
     }
 
-    public static Connection getConexao() {
+    public static synchronized Connection getConexao() {
         if (conexao == null) {
-            synchronized (Conexao.class) {
-                if (conexao == null) {
-                    try {
-                        Class.forName(DRIVER);
-                        conexao = DriverManager.getConnection(HOST, USUARIO, SENHA);
-                        System.out.println("Conexão com o banco de dados estabelecida.");
-                    } catch (ClassNotFoundException e) {
-                        System.out.println("Driver JDBC não encontrado: " + e.getMessage());
-                    } catch (SQLException e) {
-                        System.out.println("Erro ao estabelecer a conexão com o banco de dados: " + e.getMessage());
-                    }
-                }
+            try {
+                Class.forName(getInstance().getDriver());
+                conexao = DriverManager.getConnection(getInstance().getHost(), getInstance().getUsuario(), getInstance().getSenha());
+                System.out.println("Conexão com o banco de dados estabelecida.");
+            } catch (ClassNotFoundException e) {
+                System.out.println("Driver JDBC não encontrado: " + e.getMessage());
+            } catch (SQLException e) {
+                System.out.println("Erro ao estabelecer a conexão com o banco de dados: " + e.getMessage());
             }
         }
         return conexao;
@@ -53,5 +51,9 @@ public class Conexao {
                 System.out.println("Erro ao fechar a conexão com o banco de dados: " + e.getMessage());
             }
         }
+    }
+
+    public static Conexao getInstance() {
+        return new ConexaoPostgreSQL();
     }
 }
