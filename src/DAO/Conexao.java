@@ -1,9 +1,6 @@
 package DAO;
 
 import java.sql.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class Conexao {
     private static final String DRIVER = "org.postgresql.Driver";
@@ -15,22 +12,32 @@ public class Conexao {
     private static final String SENHA = "1";
     private static Connection conexao;
 
-    public static Connection criarConexao() {
+    private Conexao() {
+        // Construtor privado para evitar instanciação direta da classe
+    }
+
+    public static Connection getConexao() {
         if (conexao == null) {
-            try {
-                conexao = DriverManager.getConnection(HOST, USUARIO, SENHA);
-                System.out.println("Conexão com o banco de dados estabelecida.");
-            } catch (SQLException e) {
-                System.out.println("Erro ao estabelecer a conexão com o banco de dados: " + e.getMessage());
+            synchronized (Conexao.class) {
+                if (conexao == null) {
+                    try {
+                        Class.forName(DRIVER);
+                        conexao = DriverManager.getConnection(HOST, USUARIO, SENHA);
+                        System.out.println("Conexão com o banco de dados estabelecida.");
+                    } catch (ClassNotFoundException e) {
+                        System.out.println("Driver JDBC não encontrado: " + e.getMessage());
+                    } catch (SQLException e) {
+                        System.out.println("Erro ao estabelecer a conexão com o banco de dados: " + e.getMessage());
+                    }
+                }
             }
         }
         return conexao;
     }
 
-    public static ResultSet executarQuery(String query){
+    public static ResultSet executarQuery(String query) {
         try {
-            Statement statement = null;
-            statement = conexao.createStatement();
+            Statement statement = getConexao().createStatement();
             statement.execute(query);
             return statement.getResultSet();
         } catch (SQLException e) {

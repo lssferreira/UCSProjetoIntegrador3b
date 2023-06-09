@@ -13,7 +13,7 @@ public class controllerProdutos {
     private static Connection conexao;
 
     public static void ConectarDB() {
-        conexao = Conexao.criarConexao();
+        conexao = Conexao.getConexao();
     }
 
     public static void FecharConexaoDB() {
