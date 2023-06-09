@@ -1,20 +1,16 @@
 package View;
 
-import Controller.controllerProdutos;
-import Model.Produtos;
+import Controller.ProdutosController;
+import Model.Produto;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
 
 import javax.swing.*;
 
-@SuppressWarnings("serial")
 public class CadastraProduto extends JFrame implements ActionListener {
 
     //region Componentes
@@ -22,48 +18,52 @@ public class CadastraProduto extends JFrame implements ActionListener {
     private final JPanel campos;
     private final JPanel botoes;
 
-    private final JButton bBusca;
-    private final JButton bLimpa;
-    private final JButton bInsere;
-    private final JButton bAltera;
-    private final JButton bRemove;
+    private final JButton btnBusca;
+    private final JButton btnLimpa;
+    private final JButton btnInsere;
+    private final JButton btnAltera;
+    private final JButton btnRemove;
 
-    private final JLabel lCodigo;
-    private final JLabel lNome;
-    private final JLabel lDescricao;
+    private final JLabel lblCodigo;
+    private final JLabel lblNome;
+    private final JLabel lblDescricao;
 
-    private final JTextField tCodigo;
-    private final JTextField tNome;
-    private final JTextField tDescricao;
+    private final JTextField textCodigo;
+    private final JTextField textNome;
+    private final JTextField textDescricao;
     //endregion
-
-    private Connection conn;
-
+    private static ProdutosController controller;
     public static void main(String[] args) {
 
         CadastraProduto c = new CadastraProduto();
-        controllerProdutos.ConectarDB();
+        controller.conectarDB();
         c.setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == bLimpa) {
+        if (e.getSource() == btnLimpa) {
             this.acaoLimpar();
-        } else if (e.getSource() == bBusca) {
-            this.acaoBuscar(getProduto());
-        } else if (e.getSource() == bInsere) {
-            this.acaoInserir(getProduto());
-        } else if (e.getSource() == bRemove) {
-            this.acaoRemover(getProduto());
-        } else if (e.getSource() == bAltera) {
-            this.acaoAlterar(getProduto());
+        } else {
+            try {
+                var produto = getProduto();
+                if (e.getSource() == btnBusca) {
+                    this.acaoBuscar(produto);
+                } else if (e.getSource() == btnInsere) {
+                    this.acaoInserir(produto);
+                } else if (e.getSource() == btnRemove) {
+                    this.acaoRemover(produto);
+                } else if (e.getSource() == btnAltera) {
+                    this.acaoAlterar(produto);
+                }
+            } catch (Exception erro) {
+                JOptionPane.showMessageDialog(this, "Produto informado incorretamente;");
+            }
         }
     }
 
-    private Produtos getProduto() {
-        //TODO: ADICIONAR TRATAMENTO EXCESSAO
-        return new Produtos(Integer.parseInt(this.tCodigo.getText()), this.tNome.getText(), this.tDescricao.getText());
+    private Produto getProduto() {
+        return new Produto(Integer.parseInt(this.textCodigo.getText()), this.textNome.getText(), this.textDescricao.getText());
     }
 
     public CadastraProduto() {
@@ -74,39 +74,42 @@ public class CadastraProduto extends JFrame implements ActionListener {
         this.campos = new JPanel(new GridLayout(3, 2));
         this.botoes = new JPanel(new FlowLayout());
 
-        this.lCodigo = new JLabel("Código:");
-        this.lNome = new JLabel("Nome:");
-        this.lDescricao = new JLabel("Descrição:");
+        this.lblCodigo = new JLabel("Código:");
+        this.lblNome = new JLabel("Nome:");
+        this.lblDescricao = new JLabel("Descrição:");
 
-        this.tCodigo = new JTextField(10);
-        this.tNome = new JTextField(30);
-        this.tDescricao = new JTextField(60);
+        this.textCodigo = new JTextField(10);
+        this.textNome = new JTextField(30);
+        this.textDescricao = new JTextField(60);
 
-        this.campos.add(lCodigo);
-        this.campos.add(tCodigo);
-        this.campos.add(lNome);
-        this.campos.add(tNome);
-        this.campos.add(lDescricao);
-        this.campos.add(tDescricao);
+        this.campos.add(lblCodigo);
+        this.campos.add(textCodigo);
+
+        this.campos.add(lblNome);
+        this.campos.add(textNome);
+
+        this.campos.add(lblDescricao);
+        this.campos.add(textDescricao);
 
         this.fundo.add(this.campos, BorderLayout.CENTER);
 
-        this.bBusca = new JButton("Buscar");
-        this.bBusca.addActionListener(this);
-        this.bLimpa = new JButton("Limpar");
-        this.bLimpa.addActionListener(this);
-        this.bInsere = new JButton("Incluir");
-        this.bInsere.addActionListener(this);
-        this.bAltera = new JButton("Alterar");
-        this.bAltera.addActionListener(this);
-        this.bRemove = new JButton("Remover");
-        this.bRemove.addActionListener(this);
+        this.btnBusca = new JButton("Buscar");
+        this.btnBusca.addActionListener(this);
+        this.btnLimpa = new JButton("Limpar");
+        this.btnLimpa.addActionListener(this);
+        this.btnInsere = new JButton("Incluir");
+        this.btnInsere.addActionListener(this);
+        this.btnAltera = new JButton("Alterar");
+        this.btnAltera.addActionListener(this);
+        this.btnRemove = new JButton("Remover");
+        this.btnRemove.addActionListener(this);
+        this.btnRemove.setBackground(Color.RED);
 
-        this.botoes.add(bBusca);
-        this.botoes.add(bLimpa);
-        this.botoes.add(bInsere);
-        this.botoes.add(bAltera);
-        this.botoes.add(bRemove);
+        this.botoes.add(btnBusca);
+        this.botoes.add(btnLimpa);
+        this.botoes.add(btnInsere);
+        this.botoes.add(btnAltera);
+        this.botoes.add(btnRemove);
 
         this.fundo.add(this.botoes, BorderLayout.SOUTH);
 
@@ -115,7 +118,7 @@ public class CadastraProduto extends JFrame implements ActionListener {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                controllerProdutos.FecharConexaoDB();
+                controller.fecharConexaoDB();
                 System.exit(0);
             }
         });
@@ -124,35 +127,35 @@ public class CadastraProduto extends JFrame implements ActionListener {
     }
 
     private void acaoLimpar() {
-        this.tCodigo.setText("");
-        this.tNome.setText("");
-        this.tDescricao.setText("");
+        this.textCodigo.setText("");
+        this.textNome.setText("");
+        this.textDescricao.setText("");
     }
 
-    private void acaoBuscar(Produtos produto) {
-        var produtoRetornado = controllerProdutos.BuscarProduto(produto);
+    private void acaoBuscar(Produto produto) {
+        var produtoRetornado = ProdutosController.buscarProduto(produto);
         if (produtoRetornado != null)
-            AtualizaTextBox(produtoRetornado);
+            atualizaTextBox(produtoRetornado);
         else
             JOptionPane.showMessageDialog(this, "Nenhum produto localizado com esse código.");
     }
 
-    private void AtualizaTextBox(Produtos produtoRetornado) {
-        this.tCodigo.setText(String.valueOf(produtoRetornado.getCodigo()));
-        this.tNome.setText(produtoRetornado.getNome());
-        this.tDescricao.setText(produtoRetornado.getDescricao());
+    private void atualizaTextBox(Produto produtoRetornado) {
+        this.textCodigo.setText(String.valueOf(produtoRetornado.getCodigo()));
+        this.textNome.setText(produtoRetornado.getNome());
+        this.textDescricao.setText(produtoRetornado.getDescricao());
     }
 
-    private void acaoInserir(Produtos produto) {
-        JOptionPane.showMessageDialog(this, controllerProdutos.InserirProduto(produto));
+    private void acaoInserir(Produto produto) {
+        JOptionPane.showMessageDialog(this, controller.inserirProduto(produto));
     }
 
-    private void acaoAlterar(Produtos produto) {
-        JOptionPane.showMessageDialog(this, controllerProdutos.AlterarProduto(produto));
+    private void acaoAlterar(Produto produto) {
+        JOptionPane.showMessageDialog(this, controller.alterarProduto(produto));
     }
 
-    private void acaoRemover(Produtos produto) {
-        JOptionPane.showMessageDialog(this, controllerProdutos.RemoverProduto(produto));
+    private void acaoRemover(Produto produto) {
+        JOptionPane.showMessageDialog(this, controller.removerProduto(produto));
         acaoLimpar();
     }
 }

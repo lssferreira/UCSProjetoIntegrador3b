@@ -1,10 +1,10 @@
 package Model;
 
-public class Produtos {
+public class Produto {
     private int Codigo;
     private String Nome;
     private String Descricao;
-    public Produtos(Integer codigo, String nome, String descricao) {
+    public Produto(Integer codigo, String nome, String descricao) {
         Codigo = codigo;
         Nome = nome;
         Descricao = descricao;

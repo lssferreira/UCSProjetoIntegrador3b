@@ -14,9 +14,7 @@ public abstract class Conexao {
     protected abstract String getUsuario();
     protected abstract String getSenha();
 
-    protected Conexao() {
-        // Construtor privado para evitar instanciação direta da classe
-    }
+    protected Conexao() { }
 
     public static synchronized Connection getConexao() {
         if (conexao == null) {
@@ -39,7 +37,7 @@ public abstract class Conexao {
             statement.execute(query);
             return statement.getResultSet();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ocorreu um erro ao executar: " + e.getMessage(), e);
         }
     }
 
